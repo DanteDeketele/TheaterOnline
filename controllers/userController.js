@@ -1,6 +1,7 @@
 // userController.js
 
-const { createUser } = require('../models/userModel');
+const e = require('express');
+const { createUser, deleteUserById, editUserById, getAll } = require('../models/userModel');
 
 exports.createUser = async (req, res) => {
   try {
@@ -31,3 +32,12 @@ exports.editUser = async (req, res) => {
         res.status(400).json({ status: 'fail', message: err.message });
     }
 };
+
+exports.getAllUsers = async (req, res) => {
+    try {
+        const data = await getAll();
+        res.status(200).json({ status: 'success', data });
+    } catch (err) {
+        res.status(400).json({ status: 'fail', message: err.message });
+    }
+}
