@@ -1,0 +1,29 @@
+# Dependency directories
+node_modules/
+
+# Environment variables file
+.env
+
+# Editor/IDE specific files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Log files
+logs/
+*.log
+
+# Ignore built files
+dist/
+build/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Ignore npm debug log
+npm-debug.log*
+
+# Ignore yarn error log
+yarn-error.log
