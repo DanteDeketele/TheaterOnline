@@ -1,9 +1,9 @@
 // JavaScript code to fetch and display user data
 
 // Function to fetch user data from the server with pagination
-function fetchUsers(page, pageSize) {
+function fetchUsers(page, pageSize, searchValue = '') {
     // Replace this URL with your actual API endpoint to fetch user data
-    const apiUrl = `../api/user/all?page=${page}&pageSize=${pageSize}`;
+    const apiUrl = `../api/user/all?page=${page}&pageSize=${pageSize}&search=${searchValue}`;
 
     // Fetch data from the API
     fetch(apiUrl)
@@ -16,7 +16,7 @@ function fetchUsers(page, pageSize) {
         .then(data => {
             // Call the function to render users in the table
             renderUsers(data["data"]); // Assuming the API returns an object with a "users" property containing the user data
-            updatePaginator(data["data"].paging.total, data["data"].totalUsers); // Assuming the API returns pagination metadata
+            updatePaginator(data["data"].paging); // Assuming the API returns pagination metadata
         })
         .catch(error => {
             console.error('Error fetching data:', error);
@@ -26,12 +26,8 @@ function fetchUsers(page, pageSize) {
 
 // Function to render users in the table
 function renderUsers(data) {
-    console.log(data);
-    if (data.users.length === 0) {
-        console.error('No users found');
-        return;
-    }
-
+    
+    
     const userTableBody = document.getElementById('userTableBody');
     const userCount = document.getElementById('user-count');
 
@@ -39,6 +35,9 @@ function renderUsers(data) {
 
     // Clear existing table rows
     userTableBody.innerHTML = '';
+if (data.users.length === 0) {
+        return;
+    }
 
     // Loop through each user and create a table row for each
     data.users.forEach(user => {
@@ -59,7 +58,7 @@ function renderUsers(data) {
                 </div>
             </td>
             <td><div class="main__table-text">${user.username}</div></td>
-            <td><div class="main__table-text">${user.createdDate}</div></td>
+            <td><div class="main__table-text">${user.register_date}</div></td>
             <td>
                 <div class="main__table-btns">
                     <!-- Add action buttons here -->
@@ -73,14 +72,14 @@ function renderUsers(data) {
 }
 
 // Function to update the paginator
-function updatePaginator(totalPages, totalUsers) {
+function updatePaginator(paging) {
     const paginatorPages = document.querySelector('.paginator__pages');
-    paginatorPages.textContent = `${totalPages} from ${totalUsers}`;
+    paginatorPages.textContent = `${paging["current"]} from ${paging["total"]}`;
 
     const paginatorList = document.querySelector('.paginator__paginator');
     paginatorList.innerHTML = '';
 
-    for (let i = 1; i <= totalPages; i++) {
+    for (let i = 1; i <= paging["total"]; i++) {
         const li = document.createElement('li');
         li.innerHTML = `<a href="#" data-page="${i}">${i}</a>`;
         li.addEventListener('click', handlePageClick);
@@ -99,6 +98,22 @@ function handlePageClick(event) {
 const defaultPage = 1;
 const pageSize = 10;
 
+// Select the search input field
+const searchInput = document.getElementById('searchInput');
+
+// Attach an event listener to the input field
+searchInput.addEventListener('input', function() {
+    // Get the current value of the search input
+    const searchValue = searchInput.value.trim();
+
+    // Call a function to update the search with the new value
+    updateSearch(searchValue);
+});
+
+// Function to update the search with the new value
+function updateSearch(searchValue) {
+    fetchUsers(defaultPage, pageSize, searchValue);
+}
 
 
 if (document.getElementById('userTableBody') && document.getElementById('user-count')){

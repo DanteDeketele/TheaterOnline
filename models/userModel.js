@@ -107,21 +107,59 @@ const editUserById = async (userId, userData) => {
     }
 };
 
-const getAll = async (page, pageSize) => {
+const getAll = async (page, pageSize, search) => {
     try {
         // Calculate offset based on page number and page size
         const offset = (page - 1) * pageSize;
 
-        // Query to fetch paginated user data
-        const [userRows, fields] = await dbConnection.promise().query(
-            'SELECT user_id id, username, full_name, email, register_date FROM users ORDER BY register_date DESC LIMIT ? OFFSET ?',
-            [pageSize, offset]
-        );
+        // Define the base SQL query
+        let sqlQuery = 'SELECT user_id AS id, username, full_name, email, register_date FROM users';
+
+        // Define the WHERE clause to filter based on search
+        let whereClause = '';
+
+        // Define the ORDER BY clause based on whether search is empty or not
+        let orderByClause = '';
+
+        // Define the parameters for the query
+        let params = [];
+
+        // Check if search is not empty
+        if (search) {
+            // Construct the WHERE clause to filter based on search
+            whereClause = ' WHERE username LIKE ? OR full_name LIKE ? OR email LIKE ?';
+            
+            // Add the search parameters to the params array
+            params = [`%${search}%`, `%${search}%`, `%${search}%`];
+
+            // Construct the ORDER BY clause to order by relevance to the search term
+            orderByClause = ' ORDER BY CASE ' +
+                            'WHEN username LIKE ? THEN 0 ' +
+                            'WHEN full_name LIKE ? THEN 1 ' +
+                            'WHEN email LIKE ? THEN 2 ' +
+                            'ELSE 3 END';
+
+            // Add the search parameters again for ordering
+            params.push(`%${search}%`, `%${search}%`, `%${search}%`);
+        } else {
+            // If search is empty, order by register date
+            orderByClause = ' ORDER BY register_date DESC';
+        }
+
+        // Append the WHERE and ORDER BY clauses to the SQL query
+        sqlQuery += whereClause + orderByClause;
+
+        // Append the LIMIT and OFFSET clauses to implement pagination
+        sqlQuery += ' LIMIT ? OFFSET ?';
+
+        // Add pagination parameters to the params array
+        params.push(pageSize, offset);
+
+        // Execute the SQL query
+        const [userRows, fields] = await dbConnection.promise().query(sqlQuery, params);
 
         // Query to get total count of users
-        const [countRows, _] = await dbConnection.promise().query(
-            'SELECT COUNT(*) AS user_count FROM users'
-        );
+        const [countRows, _] = await dbConnection.promise().query('SELECT COUNT(*) AS user_count FROM users' + whereClause, params);
 
         // Extract total count from the countRows result
         const totalCount = countRows[0].user_count;
@@ -129,8 +167,7 @@ const getAll = async (page, pageSize) => {
         return {
             users: userRows,
             totalCount: totalCount,
-            paging:
-            {
+            paging: {
                 total: Math.ceil(totalCount / pageSize),
                 current: page,
                 size: pageSize
@@ -140,6 +177,7 @@ const getAll = async (page, pageSize) => {
         throw new Error(err.message);
     }
 };
+
 
 const getUserById = async (userId) => {
     try {

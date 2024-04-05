@@ -38,9 +38,10 @@ exports.getAllUsers = async (req, res) => {
       // Extract pagination parameters from the request query or set default values
       const page = req.query.page ? parseInt(req.query.page) : 1;
       const pageSize = req.query.pageSize ? parseInt(req.query.pageSize) : 10;
+      const search = req.query.search ? req.query.search : '';
 
       // Call getAll function with pagination parameters
-      const data = await getAll(page, pageSize);
+      const data = await getAll(page, pageSize, search);
 
       res.status(200).json({ status: 'success', data });
   } catch (err) {
