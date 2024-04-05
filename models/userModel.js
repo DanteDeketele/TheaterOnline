@@ -107,21 +107,34 @@ const editUserById = async (userId, userData) => {
     }
 };
 
-const getAll = async (userId, userData) => {
+const getAll = async (page, pageSize) => {
     try {
+        // Calculate offset based on page number and page size
+        const offset = (page - 1) * pageSize;
+
+        // Query to fetch paginated user data
         const [userRows, fields] = await dbConnection.promise().query(
-            'SELECT user_id id, username, full_name, register_date FROM users ORDER BY register_date DESC'
+            'SELECT user_id id, username, full_name, email, register_date FROM users ORDER BY register_date DESC LIMIT ? OFFSET ?',
+            [pageSize, offset]
         );
 
+        // Query to get total count of users
         const [countRows, _] = await dbConnection.promise().query(
             'SELECT COUNT(*) AS user_count FROM users'
         );
 
+        // Extract total count from the countRows result
         const totalCount = countRows[0].user_count;
 
         return {
             users: userRows,
-            totalCount: totalCount
+            totalCount: totalCount,
+            paging:
+            {
+                total: Math.ceil(totalCount / pageSize),
+                current: page,
+                size: pageSize
+            }
         };
     } catch (err) {
         throw new Error(err.message);
@@ -131,7 +144,7 @@ const getAll = async (userId, userData) => {
 const getUserById = async (userId) => {
     try {
         const [rows, fields] = await dbConnection.promise().query(
-        'SELECT user_id id, username, full_name, register_date FROM users WHERE user_id = ?',
+        'SELECT user_id id, username, full_name, email, register_date FROM users WHERE user_id = ?',
         [userId]
         );
         if (rows.length === 0) {

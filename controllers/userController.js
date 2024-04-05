@@ -34,10 +34,16 @@ exports.editUser = async (req, res) => {
 };
 
 exports.getAllUsers = async (req, res) => {
-    try {
-        const data = await getAll();
-        res.status(200).json({ status: 'success', data });
-    } catch (err) {
-        res.status(400).json({ status: 'fail', message: err.message });
-    }
-}
+  try {
+      // Extract pagination parameters from the request query or set default values
+      const page = req.query.page ? parseInt(req.query.page) : 1;
+      const pageSize = req.query.pageSize ? parseInt(req.query.pageSize) : 10;
+
+      // Call getAll function with pagination parameters
+      const data = await getAll(page, pageSize);
+
+      res.status(200).json({ status: 'success', data });
+  } catch (err) {
+      res.status(400).json({ status: 'fail', message: err.message });
+  }
+};
