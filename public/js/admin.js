@@ -42,9 +42,18 @@ if (data.users.length === 0) {
     // Loop through each user and create a table row for each
     data.users.forEach(user => {
         const row = document.createElement('tr');
+
+        // Parse registration date and format it
+        const registrationDate = new Date(user.register_date);
+        const formattedDate = registrationDate.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+
         row.innerHTML = `
             <td>
-            <div class="main__table-text">${user.id}</div>
+            <div class="main__table-text id">${user.id}</div>
             </td>
             <td>
                 <div class="main__user">
@@ -58,10 +67,10 @@ if (data.users.length === 0) {
                 </div>
             </td>
             <td><div class="main__table-text">${user.username}</div></td>
-            <td><div class="main__table-text">${user.register_date}</div></td>
+            <td><div class="main__table-text">${formattedDate}</div></td>
             <td>
                 <div class="main__table-btns">
-                    <!-- Add action buttons here -->
+                    <button class="delete-user-btn" data-user-id="${user.id}">Delete</button>
                 </div>
             </td>
         `;
@@ -96,7 +105,7 @@ function handlePageClick(event) {
 
 // Assuming you have a default page and pageSize
 const defaultPage = 1;
-const pageSize = 10;
+const pageSize = 15;
 
 // Select the search input field
 const searchInput = document.getElementById('searchInput');
@@ -114,6 +123,25 @@ searchInput.addEventListener('input', function() {
 function updateSearch(searchValue) {
     fetchUsers(defaultPage, pageSize, searchValue);
 }
+
+document.addEventListener('click', function(event) {
+    if (event.target.classList.contains('delete-user-btn')) {
+        const userId = event.target.dataset.userId;
+        // Make an API call to delete the user using the userId
+        fetch(`../api/user/delete/${userId}`, {
+            method: 'DELETE'
+        })
+        .then(response => {
+            // Handle response, maybe refresh the user list
+            console.log('User deleted successfully');
+            fetchUsers(defaultPage, pageSize, searchInput.value.trim());
+            // Call a function to refresh the user list if needed
+        })
+        .catch(error => {
+            console.error('Error deleting user:', error);
+        });
+    }
+});
 
 
 if (document.getElementById('userTableBody') && document.getElementById('user-count')){

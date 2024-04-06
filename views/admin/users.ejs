@@ -100,6 +100,40 @@
 					</div>
 				</div>
 				<!-- end paginator -->
+
+				<!-- add users -->
+				<div class="col-12">
+					<button id="addTestUsersBtn">Add Test Users</button>
+
+					<script>
+						document.getElementById('addTestUsersBtn').addEventListener('click', function() {
+							// Loop to add 100 test users
+							for (let i = 1; i <= 100; i++) {
+								const userData = {
+									username: `testuser${i.toString().padStart(3, '0')}`,
+									fullName: `Test User ${i.toString().padStart(3, '0')}`,
+									email: `testuser${i.toString().padStart(3, '0')}@example.com`,
+									password: 'test123test'
+								};
+
+								fetch('../api/user/create', {
+									method: 'POST',
+									headers: {
+										'Content-Type': 'application/json'
+									},
+									body: JSON.stringify(userData)
+								})
+								.then(response => response.json())
+								.then(data => {
+									console.log(`User ${userData.username} created successfully`);
+								})
+								.catch(error => {
+									console.error('Error creating user:', error);
+								});
+							}
+						});
+					</script>
+				</div>
 			</div>
 		</div>
 	</main>

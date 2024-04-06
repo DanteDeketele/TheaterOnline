@@ -1,5 +1,8 @@
 /* Reset CSS */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
 * {
+  font-family: "Poppins", sans-serif;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -65,13 +68,16 @@ body {
 
 .sidebar__nav-link {
   color: #fff;
+  fill: #fff;
+  display: flex;
+  align-items: center; 
   text-decoration: none;
-  display: block;
   padding: 10px;
 }
 
 .sidebar__nav-link svg {
   width: 25px;
+  margin-right: 10px;
 }
 
 .sidebar__nav-link:hover {
@@ -125,10 +131,6 @@ body {
   fill: white;
 }
 
-.main__meta {
-  /* Keep the meta information styling */
-}
-
 .filter {
   margin-right: 20px;
 }
@@ -168,12 +170,14 @@ body {
 .main__table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
 .main__table th,
 .main__table td {
-  padding: 10px;
-  border-bottom: 1px solid #444;
+  padding: 5px;
+  text-align: left;
+  border-bottom: 2px solid #313131;
 }
 
 .main__table th {
@@ -182,6 +186,36 @@ body {
 
 .main__table-text {
   color: #fff;
+}
+
+.main__table th:first-child,
+.main__table td:first-child {
+  width: 40px; /* Adjust the width as needed */
+}
+
+.main__table th:nth-child(2),
+.main__table td:nth-child(2) {
+  width: 100px; /* Adjust the width as needed */
+}
+
+.main__table th:nth-child(3),
+.main__table td:nth-child(3) {
+  width: 100px; /* Adjust the width as needed */
+}
+
+.main__table th:nth-child(4),
+.main__table td:nth-child(4) {
+  width: 50px; /* Adjust the width as needed */
+}
+
+.main__table th:nth-child(5),
+.main__table td:nth-child(5) {
+  width: 50px; /* Adjust the width as needed */
+}
+
+/* Define a monospace font for the IDs */
+.id{
+  font-family: 'Courier New', Courier, monospace;
 }
 
 .paginator {

@@ -134,10 +134,10 @@ const getAll = async (page, pageSize, search) => {
 
             // Construct the ORDER BY clause to order by relevance to the search term
             orderByClause = ' ORDER BY CASE ' +
-                            'WHEN user_id LIKE ? THEN 0 ' +
-                            'WHEN username LIKE ? THEN 1 ' +
-                            'WHEN full_name LIKE ? THEN 2 ' +
-                            'WHEN email LIKE ? THEN 3 ' +
+                            'WHEN username LIKE ? THEN 0 ' +
+                            'WHEN full_name LIKE ? THEN 1 ' +
+                            'WHEN email LIKE ? THEN 2 ' +
+                            'WHEN user_id LIKE ? THEN 3 ' +
                             'ELSE 4 END';
 
             // Add the search parameters again for ordering
