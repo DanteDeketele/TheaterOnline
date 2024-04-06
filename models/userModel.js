@@ -127,20 +127,21 @@ const getAll = async (page, pageSize, search) => {
         // Check if search is not empty
         if (search) {
             // Construct the WHERE clause to filter based on search
-            whereClause = ' WHERE username LIKE ? OR full_name LIKE ? OR email LIKE ?';
+            whereClause = ' WHERE user_id LIKE ? OR username LIKE ? OR full_name LIKE ? OR email LIKE ?';
             
             // Add the search parameters to the params array
-            params = [`%${search}%`, `%${search}%`, `%${search}%`];
+            params = [`%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`];
 
             // Construct the ORDER BY clause to order by relevance to the search term
             orderByClause = ' ORDER BY CASE ' +
-                            'WHEN username LIKE ? THEN 0 ' +
-                            'WHEN full_name LIKE ? THEN 1 ' +
-                            'WHEN email LIKE ? THEN 2 ' +
-                            'ELSE 3 END';
+                            'WHEN user_id LIKE ? THEN 0 ' +
+                            'WHEN username LIKE ? THEN 1 ' +
+                            'WHEN full_name LIKE ? THEN 2 ' +
+                            'WHEN email LIKE ? THEN 3 ' +
+                            'ELSE 4 END';
 
             // Add the search parameters again for ordering
-            params.push(`%${search}%`, `%${search}%`, `%${search}%`);
+            params.push(`%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`);
         } else {
             // If search is empty, order by register date
             orderByClause = ' ORDER BY register_date DESC';

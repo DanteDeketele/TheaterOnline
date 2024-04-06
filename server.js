@@ -25,6 +25,9 @@ app.get('/admin/dashboard', (req, res) => {
   res.render('admin/dashboard');
 });
 
+app.get('/admin/users', (req, res) => {
+  res.render('admin/users');
+});
 
 // Start the server
 const PORT = process.env.PORT || 3000;
