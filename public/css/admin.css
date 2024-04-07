@@ -14,16 +14,6 @@ body {
   color: #fff;
 }
 
-/* Header */
-.header {
-  background-color: #333;
-  padding: 10px 20px;
-}
-
-.header__logo img {
-  width: 100px; /* Adjust the width as needed */
-}
-
 /* Sidebar */
 .sidebar {
   position: fixed;
@@ -32,13 +22,13 @@ body {
   width: 250px; /* Adjust the width as needed */
   height: 100%;
   background-color: #333;
-  padding-top: 60px; /* Height of the header */
 }
 
 .sidebar__logo img {
-  width: 150px; /* Adjust the width as needed */
+  width: 90%; /* Adjust the width as needed */
   display: block;
   margin: 0 auto;
+  fill: white;
 }
 
 .sidebar__user {
@@ -248,4 +238,116 @@ body {
 
 .paginator__paginator li a:hover {
   background-color: #444;
+}
+
+/* User profile card */
+.card {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card__body {
+  padding: 20px;
+}
+
+/* User profile container */
+.user-profile {
+  display: flex;
+  align-items: center;
+}
+
+/* User ID section */
+.user-profile__id {
+  flex: 1;
+}
+
+/* Avatar image */
+.user-profile__avatar img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-right: 20px;
+}
+
+/* User information */
+.user-profile__info {
+  flex: 2;
+}
+
+.user-profile__username {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.user-profile__email {
+  color: #777;
+  margin-bottom: 10px;
+}
+
+.user-profile__details {
+  color: #555;
+}
+
+/* Additional CSS for login and register forms */
+.form-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.form-container form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-container label {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.form-container input[type="text"],
+.form-container input[type="email"],
+.form-container input[type="password"] {
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  outline: none;
+}
+
+.form-container input[type="text"]:focus,
+.form-container input[type="email"]:focus,
+.form-container input[type="password"]:focus {
+  border-color: #2F80ED;
+}
+
+.form-container button {
+  padding: 10px;
+  background-color: #2F80ED;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.form-container button:hover {
+  background-color: #1E60D4;
+}
+
+/* Error message style */
+.error-message {
+  color: #ff0000;
+  margin-top: 5px;
 }

@@ -3,7 +3,7 @@
 // Function to fetch user data from the server with pagination
 function fetchUsers(page, pageSize, searchValue = '') {
     // Replace this URL with your actual API endpoint to fetch user data
-    const apiUrl = `../api/user/all?page=${page}&pageSize=${pageSize}&search=${searchValue}`;
+    const apiUrl = `/api/user/all?page=${page}&pageSize=${pageSize}&search=${searchValue}`;
 
     // Fetch data from the API
     fetch(apiUrl)
@@ -51,6 +51,9 @@ if (data.users.length === 0) {
             day: 'numeric'
         });
 
+        const promoteText = user.is_admin ? 'Demote' : 'Promote';
+        const promoteClass = user.is_admin ? 'demote' : 'promote';
+
         row.innerHTML = `
             <td>
             <div class="main__table-text id">${user.id}</div>
@@ -58,7 +61,7 @@ if (data.users.length === 0) {
             <td>
                 <div class="main__user">
                     <div class="main__avatar">
-                        <img src="../img/user.svg" alt="" class="white">
+                        <img src="/img/user.svg" alt="" class="white">
                     </div>
                     <div class="main__meta">
                         <h3>${user.username}</h3>
@@ -70,7 +73,9 @@ if (data.users.length === 0) {
             <td><div class="main__table-text">${formattedDate}</div></td>
             <td>
                 <div class="main__table-btns">
+                    <button class="edit-user-btn" data-user-id="${user.id}">Edit</button>
                     <button class="delete-user-btn" data-user-id="${user.id}">Delete</button>
+                    <button class="${promoteClass}-user-btn" data-user-id="${user.id}">${promoteText}</button>
                 </div>
             </td>
         `;
@@ -110,14 +115,16 @@ const pageSize = 15;
 // Select the search input field
 const searchInput = document.getElementById('searchInput');
 
-// Attach an event listener to the input field
-searchInput.addEventListener('input', function() {
-    // Get the current value of the search input
-    const searchValue = searchInput.value.trim();
+if (searchInput) {
+    // Attach an event listener to the input field
+    searchInput.addEventListener('input', function() {
+        // Get the current value of the search input
+        const searchValue = searchInput.value.trim();
 
-    // Call a function to update the search with the new value
-    updateSearch(searchValue);
-});
+        // Call a function to update the search with the new value
+        updateSearch(searchValue);
+    });
+}
 
 // Function to update the search with the new value
 function updateSearch(searchValue) {
@@ -128,7 +135,7 @@ document.addEventListener('click', function(event) {
     if (event.target.classList.contains('delete-user-btn')) {
         const userId = event.target.dataset.userId;
         // Make an API call to delete the user using the userId
-        fetch(`../api/user/delete/${userId}`, {
+        fetch(`/api/user/delete/${userId}`, {
             method: 'DELETE'
         })
         .then(response => {
@@ -139,6 +146,44 @@ document.addEventListener('click', function(event) {
         })
         .catch(error => {
             console.error('Error deleting user:', error);
+        });
+    }
+    if (event.target.classList.contains('edit-user-btn')) {
+        const userId = event.target.dataset.userId;
+        
+        // Redirect to the edit user page with the userId
+        window.location.href = `/admin/users/${userId}`;
+    }
+    if (event.target.classList.contains('promote-user-btn')) {
+        const userId = event.target.dataset.userId;
+        // Make an API call to promote the user using the userId
+        fetch(`/api/user/promote/${userId}`, {
+            method: 'PUT'
+        })
+        .then(response => {
+            // Handle response, maybe refresh the user list
+            console.log('User promoted successfully');
+            fetchUsers(defaultPage, pageSize, searchInput.value.trim());
+            // Call a function to refresh the user list if needed
+        })
+        .catch(error => {
+            console.error('Error promoting user:', error);
+        });
+    }
+    if (event.target.classList.contains('demote-user-btn')) {
+        const userId = event.target.dataset.userId;
+        // Make an API call to demote the user using the userId
+        fetch(`/api/user/demote/${userId}`, {
+            method: 'PUT'
+        })
+        .then(response => {
+            // Handle response, maybe refresh the user list
+            console.log('User demoted successfully');
+            fetchUsers(defaultPage, pageSize, searchInput.value.trim());
+            // Call a function to refresh the user list if needed
+        })
+        .catch(error => {
+            console.error('Error demoting user:', error);
         });
     }
 });

@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TheaterOnline Dashboard</title>
     <link rel="stylesheet" href="../css/admin.css">
+	<!-- Include Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -14,25 +16,71 @@
 
     <main class="main">
         <div class="container-fluid">
-			<div class="row">
-				<!-- main title -->
-				<div class="col-12">
-					<div class="main__title">
-						<h2>Dashboard</h2>
-
-						<div class="main__title-wrap">
-							
-						</div>
-					</div>
-				</div>
-				<!-- end main title -->
-
-				=
-			</div>
-		</div>
+            <div class="row">
+                <!-- main title -->
+                <div class="col-12">
+                    <div class="main__title">
+                        <h2>Dashboard</h2>
+                        <div class="main__title-wrap">
+                            <!-- Add canvas for the chart -->
+                            <canvas id="userChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <!-- end main title -->
+            </div>
+        </div>
     </main>
 
     <%- include ('footer.ejs') %>
     
+	<!-- Script to fetch data and render the chart -->
+    <script>
+        // Function to fetch data from API and render chart
+        async function renderUsersCreatedPerWeekChart() {
+            try {
+                const response = await fetch('/api/user/weekly-created-users');
+                const data = await response.json();
+                if (data.status === 'success') {
+                    const userData = data.data;
+                    const labels = userData.map(entry => entry.week);
+                    const counts = userData.map(entry => entry.user_count);
+                    renderChart(labels, counts);
+                } else {
+                    throw new Error(data.message || 'Failed to fetch data');
+                }
+            } catch (error) {
+                console.error('Error fetching and rendering chart:', error);
+            }
+        }
+
+        // Function to render the chart using Chart.js
+        function renderChart(labels, counts) {
+            const ctx = document.getElementById('userChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Users Created per Week',
+                        data: counts,
+                        fill: false,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Call the function to render the chart when the page loads
+        window.addEventListener('load', renderUsersCreatedPerWeekChart);
+    </script>
 </body>
 </html>

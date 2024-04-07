@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - TheaterOnline Dashboard</title>
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+
+    <%- include ('header.ejs') %>
+    
+    <%- include ('sidebar.ejs') %>
+
+    <!-- main content -->
+    <main class="main">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- main title -->
+                <div class="col-12">
+                    <div class="main__title">
+                        <h2>User Profile</h2>
+                    </div>
+                </div>
+                <!-- end main title -->
+                
+                <!-- user profile -->
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card__body">
+                            <div class="user-profile" id="user-profile">
+                                <div class="user-profile__id">
+                                    <!-- User ID here -->
+                                    <p>User ID: <span id="userId"></span></p>
+                                </div>
+                                <div class="user-profile__avatar">
+                                    <!-- Avatar image here -->
+                                    <img src="/img/user.svg" alt="User Avatar" id="userAvatar">
+                                </div>
+                                <div class="user-profile__info">
+                                    <!-- User information here -->
+                                    <h3 class="user-profile__username" id="userName">User Name</h3>
+                                    <p class="user-profile__email" id="userEmail">user@example.com</p>
+                                    <p class="user-profile__details" id="userDetails">Other details about the user</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end user profile -->
+
+            </div>
+        </div>
+    </main>
+
+    <%- include ('footer.ejs') %>
+
+    <!-- JavaScript to fetch user data -->
+    <script>
+        // Function to fetch user data by ID
+        function fetchUserData(userId) {
+            fetch(`/api/user/${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data["status"] != "success") {
+                        document.getElementById('user-profile').innerHTML =  'User not found.';
+                        return;
+                    }
+
+                    if (data["data"].details == null) {
+                        data["data"].details = "No details available";
+                    }
+
+                    // Update user profile with fetched data
+                    document.getElementById('userId').textContent = data["data"].id;
+                    document.getElementById('userName').textContent = data["data"].username;
+                    document.getElementById('userEmail').textContent = data["data"].email;
+                    document.getElementById('userDetails').textContent = data["data"].details; // Replace 'details' with actual key for user details
+                })
+                .catch(error => console.error('Error fetching user data:', error));
+        }
+
+        // Extract user ID from the URL path
+        const userId = window.location.pathname.split('/').pop();
+
+        // Fetch user data on page load
+        window.addEventListener('load', () => {
+            if (userId) {
+                fetchUserData(userId);
+            } else {
+                console.error('User ID not found in URL');
+            }
+        });
+    </script>
+</body>
+</html>

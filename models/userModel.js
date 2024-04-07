@@ -1,6 +1,7 @@
 // userModel.js
 
 const dbConnection = require('../config/dbConfig');
+const { get } = require('../routes/userRoutes');
 const { generateIdCode, isIdCode } = require('../utils/idCodeGenerator');
 const bcrypt = require('bcrypt');
 
@@ -113,7 +114,7 @@ const getAll = async (page, pageSize, search) => {
         const offset = (page - 1) * pageSize;
 
         // Define the base SQL query
-        let sqlQuery = 'SELECT user_id AS id, username, full_name, email, register_date FROM users';
+        let sqlQuery = 'SELECT user_id AS id, username, full_name, email, register_date, is_admin FROM users';
 
         // Define the WHERE clause to filter based on search
         let whereClause = '';
@@ -183,16 +184,112 @@ const getAll = async (page, pageSize, search) => {
 const getUserById = async (userId) => {
     try {
         const [rows, fields] = await dbConnection.promise().query(
-        'SELECT user_id id, username, full_name, email, register_date FROM users WHERE user_id = ?',
+        'SELECT user_id id, username, full_name, email, register_date, is_admin FROM users WHERE user_id = ?',
         [userId]
         );
         if (rows.length === 0) {
-        throw new Error('User not found.');
+            throw new Error('User not found.');
         }
         return rows[0];
     } catch (err) {
         throw new Error(err.message);
     }
 };
+
+const getUserByEmail = async (email) => {
+    try {
+        const [rows, fields] = await dbConnection.promise().query(
+        'SELECT user_id id, username, full_name, email, password, register_date, is_admin FROM users WHERE email = ?',
+        [email]
+        );
+        if (rows.length === 0) {
+            return new Error('User not found.');
+        }
+        return rows[0];
+    } catch (err) {
+        throw new Error(err.message);
+    }
+}
+
+const getUserByUsernameOrEmail = async (usernameOrEmail) => {
+    try {
+        const [rows, fields] = await dbConnection.promise().query(
+        'SELECT user_id id, username, full_name, email, password, register_date, is_admin FROM users WHERE username = ? OR email = ?',
+        [usernameOrEmail, usernameOrEmail]
+        );
+        if (rows.length === 0) {
+            return new Error('User not found.');
+        }
+        return rows[0];
+    } catch (err) {
+        throw new Error(err.message);
+    }
+}
+
+const getUsersCreatedPerWeek = async () => {
+    try {
+        const sqlQuery = `
+            SELECT YEARWEEK(register_date) AS week, COUNT(*) AS user_count
+            FROM users
+            GROUP BY YEARWEEK(register_date)
+            ORDER BY YEARWEEK(register_date) ASC
+        `;
+        const [rows, _] = await dbConnection.promise().query(sqlQuery);
+        return rows;
+    } catch (err) {
+        throw new Error(err.message);
+    }
+};
+
+const promoteToAdmin = async (userId) => {
+    try {
+        const [rows, fields] = await dbConnection.promise().execute(
+        'UPDATE users SET is_admin = ? WHERE user_id = ?',
+        [true, userId]
+        );
+    } catch (err) {
+        throw new Error(err.message);
+    }
+}
+
+const demoteFromAdmin = async (userId) => {
+    try {
+        const [rows, fields] = await dbConnection.promise().execute(
+        'UPDATE users SET is_admin = ? WHERE user_id = ?',
+        [false, userId]
+        );
+    } catch (err) {
+        throw new Error(err.message);
+    }
+}
+
+const getAdmins = async () => {
+    try {
+        const [rows, fields] = await dbConnection.promise().query(
+        'SELECT user_id AS id, username, full_name, email, register_date, is_admin FROM users WHERE is_admin = ?',
+        [true]
+        );
+        return rows;
+    } catch (err) {
+        throw new Error(err.message);
+    }
+}
+
+const getPassword = async (userId) => {
+    if (!isIdCode(userId)) {
+        throw new Error('Invalid user ID.');
+    }
+    try {
+        const [rows, fields] = await dbConnection.promise().query(
+        'SELECT password FROM users WHERE user_id = ?',
+        [userId]
+        );
+        return rows[0].password;
+    } catch (err) {
+        throw new Error(err.message);
+    }
+}
+
   
-  module.exports = { createUser, deleteUserById, editUserById, getAll, getUserById };
+  module.exports = { createUser, deleteUserById, editUserById, getAll, getUserById, getUserByEmail, getUserByUsernameOrEmail, getUsersCreatedPerWeek, getPassword,
+    promoteToAdmin, demoteFromAdmin, getAdmins};
