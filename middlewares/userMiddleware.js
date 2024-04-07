@@ -9,8 +9,8 @@ const fetchUserDetails = async (req, res, next) => {
     const user = await getUserById(userId); // Replace with your function to fetch user details
     req.user = user; // Attach user details to the request object
     next(); // Move to the next middleware or route handler
-  } catch (error) {
-    res.status(500).json({ status: 'error', message: 'Failed to fetch user details.' });
+  } catch (err) {
+    next();
   }
 };
 

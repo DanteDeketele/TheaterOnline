@@ -8,13 +8,13 @@
     
     <!-- sidebar user -->
     <div class="sidebar__user">
-        <% if (loggedIn) { %>
+        <% if (user) { %>
             <div class="sidebar__user-img">
                 <img src="/img/user.svg" alt="">
             </div>
             <div class="sidebar__user-title">
-                <span><%= user.role %></span>
-                <p><%= user.fullName %></p>
+                <span><%= user.username %></span>
+                <p><%= user.full_name %></p>
             </div>
         <% } else { %>
             <div class="sidebar__user-title">

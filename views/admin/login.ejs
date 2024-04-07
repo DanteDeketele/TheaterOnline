@@ -70,7 +70,7 @@
                             // Login successful, store JWT token in localStorage or sessionStorage
                             localStorage.setItem('token', data.token);
                             // Redirect user to dashboard or other protected page
-                            window.location.href = '/dashboard';
+                            window.location.href = '/admin/dashboard';
                         } else {
                             // Login failed, display error message
                             alert(data.message);

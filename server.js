@@ -1,11 +1,19 @@
 // server.js
 
 const express = require('express');
+const session = require('express-session');
 const path = require('path');
 const userRoutes = require('./routes/userRoutes');
 const { fetchUserDetails } = require('./middlewares/userMiddleware');
 
 const app = express();
+
+// Add session middleware to your Express.js app
+app.use(session({
+    secret: 'your_secret_key',
+    resave: false,
+    saveUninitialized: false
+}));
 
 // Middleware
 app.use(express.json());
