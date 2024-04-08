@@ -52,6 +52,12 @@ app.get('/admin/users', (req, res) => {
 app.get('/admin/users/:id', (req, res) => {
   res.render('admin/user', { user: req.user, id: req.params.id });
 });
+
+// Middleware to handle 404 errors
+app.use((req, res, next) => {
+  res.status(404).render('404'); // Render the 404 page
+});
+
 // Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
