@@ -139,78 +139,6 @@ body {
   height: 50px;
 }
 
-.property .bed {
-  color: #FFA000;
-}
-
-.property .bath {
-  color: #03A9F4;
-}
-
-.property .size {
-  color: #388E3C;
-}
-
-/*
- * House icon colors.
- */
-.property.highlight:has(.fa-house) .icon {
-  color: var(--house-color);
-}
-
-.property:not(.highlight):has(.fa-house) {
-  background-color: var(--house-color);
-}
-
-.property:not(.highlight):has(.fa-house)::after {
-  border-top: 9px solid var(--house-color);
-}
-
-/*
- * Building icon colors.
- */
-.property.highlight:has(.fa-building) .icon {
-  color: var(--building-color);
-}
-
-.property:not(.highlight):has(.fa-building) {
-  background-color: var(--building-color);
-}
-
-.property:not(.highlight):has(.fa-building)::after {
-  border-top: 9px solid var(--building-color);
-}
-
-/*
- * Warehouse icon colors.
- */
-.property.highlight:has(.fa-warehouse) .icon {
-  color: var(--warehouse-color);
-}
-
-.property:not(.highlight):has(.fa-warehouse) {
-  background-color: var(--warehouse-color);
-}
-
-.property:not(.highlight):has(.fa-warehouse)::after {
-  border-top: 9px solid var(--warehouse-color);
-}
-
-/*
- * Shop icon colors.
- */
-.property.highlight:has(.fa-shop) .icon {
-  color: var(--shop-color);
-}
-
-.property:not(.highlight):has(.fa-shop) {
-  background-color: var(--shop-color);
-}
-
-.property:not(.highlight):has(.fa-shop)::after {
-  border-top: 9px solid var(--shop-color);
-}
-
 .logo{
     max-width: 100%;
     max-height: 100px;
@@ -222,6 +150,7 @@ body {
     border-radius: 5px;
 }
     </style>
+</script>
 
 </head>
 <body>
@@ -229,56 +158,23 @@ body {
     <script>
        async function initMap() {
   // Request needed libraries.
-  const { Map } = await google.maps.importLibrary("maps");
-  const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+  const { Map, InfoWindow } = await google.maps.importLibrary("maps");
+  const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary(
+    "marker",
+  );
+
   const center = { lat: 51.03406855212306, lng: 4.114069511980837 };
   const map = new Map(document.getElementById("map"), {
-    zoom: 9,
+    zoom: 10,
     center,
     mapId: "c4e4580c04395a6d",
-    styles: [ // Apply minimalistic styles
-      {
-        "featureType": "poi",
-        "stylers": [
-          { "visibility": "off" }
-        ]
-      },
-      {
-        "featureType": "transit",
-        "stylers": [
-          { "visibility": "off" }
-        ]
-      },
-      {
-            "featureType": "all",
-            "elementType": "labels.text",
-            "stylers": [
-            { "visibility": "off" }
-            ]
-        },
-        {
-            "featureType": "road",
-            "elementType": "labels.icon",
-            "stylers": [
-            { "visibility": "off" }
-            ]
-        },
-        {
-            "featureType": "poi",
-            "elementType": "labels",
-            "stylers": [
-            { "visibility": "off" }
-            ]
-        },
-        {
-            "featureType": "transit",
-            "elementType": "labels",
-            "stylers": [
-            { "visibility": "off" }
-            ]
-        },
-    ]
+    disableDefaultUI: true,
+
   });
+  
+  map.setOptions({ styles: styles.silver });
+
+    const markers = [];
 
   for (const property of properties) {
     const AdvancedMarkerElement = new google.maps.marker.AdvancedMarkerElement({
@@ -288,12 +184,13 @@ body {
       title: property.description,
     });
 
+    markers.push(AdvancedMarkerElement);
+
     AdvancedMarkerElement.addListener("click", () => {
       toggleHighlight(AdvancedMarkerElement, property);
     });
   }
 
-  
   
 }
 
@@ -318,6 +215,299 @@ function toggleHighlight(markerView, property) {
   }
 }
 
+const styles = {
+  default: [],
+  silver: [
+    {
+      elementType: "geometry",
+      stylers: [{ color: "#f5f5f5" }],
+    },
+    {
+      elementType: "labels.icon",
+      stylers: [{ visibility: "off" }],
+    },
+    {
+      elementType: "labels.text.fill",
+      stylers: [{ color: "#616161" }],
+    },
+    {
+      elementType: "labels.text.stroke",
+      stylers: [{ color: "#f5f5f5" }],
+    },
+    {
+      featureType: "administrative.land_parcel",
+      elementType: "labels.text.fill",
+      stylers: [{ color: "#bdbdbd" }],
+    },
+    {
+      featureType: "poi",
+      elementType: "geometry",
+      stylers: [{ color: "#eeeeee" }],
+    },
+    {
+      featureType: "poi",
+      elementType: "labels.text.fill",
+      stylers: [{ color: "#757575" }],
+    },
+    {
+      featureType: "poi.park",
+      elementType: "geometry",
+      stylers: [{ color: "#e5e5e5" }],
+    },
+    {
+      featureType: "poi.park",
+      elementType: "labels.text.fill",
+      stylers: [{ color: "#9e9e9e" }],
+    },
+    {
+      featureType: "road",
+      elementType: "geometry",
+      stylers: [{ color: "#ffffff" }],
+    },
+    {
+      featureType: "road.arterial",
+      elementType: "labels.text.fill",
+      stylers: [{ color: "#757575" }],
+    },
+    {
+      featureType: "road.highway",
+      elementType: "geometry",
+      stylers: [{ color: "#dadada" }],
+    },
+    {
+      featureType: "road.highway",
+      elementType: "labels.text.fill",
+      stylers: [{ color: "#616161" }],
+    },
+    {
+      featureType: "road.local",
+      elementType: "labels.text.fill",
+      stylers: [{ color: "#9e9e9e" }],
+    },
+    {
+      featureType: "transit.line",
+      elementType: "geometry",
+      stylers: [{ color: "#e5e5e5" }],
+    },
+    {
+      featureType: "transit.station",
+      elementType: "geometry",
+      stylers: [{ color: "#eeeeee" }],
+    },
+    {
+      featureType: "water",
+      elementType: "geometry",
+      stylers: [{ color: "#c9c9c9" }],
+    },
+    {
+      featureType: "water",
+      elementType: "labels.text.fill",
+      stylers: [{ color: "#9e9e9e" }],
+    },
+  ],
+  night: [
+    { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
+    { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
+    { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
+    {
+      featureType: "administrative.locality",
+      elementType: "labels.text.fill",
+      stylers: [{ color: "#d59563" }],
+    },
+    {
+      featureType: "poi",
+      elementType: "labels.text.fill",
+      stylers: [{ color: "#d59563" }],
+    },
+    {
+      featureType: "poi.park",
+      elementType: "geometry",
+      stylers: [{ color: "#263c3f" }],
+    },
+    {
+      featureType: "poi.park",
+      elementType: "labels.text.fill",
+      stylers: [{ color: "#6b9a76" }],
+    },
+    {
+      featureType: "road",
+      elementType: "geometry",
+      stylers: [{ color: "#38414e" }],
+    },
+    {
+      featureType: "road",
+      elementType: "geometry.stroke",
+      stylers: [{ color: "#212a37" }],
+    },
+    {
+      featureType: "road",
+      elementType: "labels.text.fill",
+      stylers: [{ color: "#9ca5b3" }],
+    },
+    {
+      featureType: "road.highway",
+      elementType: "geometry",
+      stylers: [{ color: "#746855" }],
+    },
+    {
+      featureType: "road.highway",
+      elementType: "geometry.stroke",
+      stylers: [{ color: "#1f2835" }],
+    },
+    {
+      featureType: "road.highway",
+      elementType: "labels.text.fill",
+      stylers: [{ color: "#f3d19c" }],
+    },
+    {
+      featureType: "transit",
+      elementType: "geometry",
+      stylers: [{ color: "#2f3948" }],
+    },
+    {
+      featureType: "transit.station",
+      elementType: "labels.text.fill",
+      stylers: [{ color: "#d59563" }],
+    },
+    {
+      featureType: "water",
+      elementType: "geometry",
+      stylers: [{ color: "#17263c" }],
+    },
+    {
+      featureType: "water",
+      elementType: "labels.text.fill",
+      stylers: [{ color: "#515c6d" }],
+    },
+    {
+      featureType: "water",
+      elementType: "labels.text.stroke",
+      stylers: [{ color: "#17263c" }],
+    },
+  ],
+  retro: [
+    { elementType: "geometry", stylers: [{ color: "#ebe3cd" }] },
+    { elementType: "labels.text.fill", stylers: [{ color: "#523735" }] },
+    { elementType: "labels.text.stroke", stylers: [{ color: "#f5f1e6" }] },
+    {
+      featureType: "administrative",
+      elementType: "geometry.stroke",
+      stylers: [{ color: "#c9b2a6" }],
+    },
+    {
+      featureType: "administrative.land_parcel",
+      elementType: "geometry.stroke",
+      stylers: [{ color: "#dcd2be" }],
+    },
+    {
+      featureType: "administrative.land_parcel",
+      elementType: "labels.text.fill",
+      stylers: [{ color: "#ae9e90" }],
+    },
+    {
+      featureType: "landscape.natural",
+      elementType: "geometry",
+      stylers: [{ color: "#dfd2ae" }],
+    },
+    {
+      featureType: "poi",
+      elementType: "geometry",
+      stylers: [{ color: "#dfd2ae" }],
+    },
+    {
+      featureType: "poi",
+      elementType: "labels.text.fill",
+      stylers: [{ color: "#93817c" }],
+    },
+    {
+      featureType: "poi.park",
+      elementType: "geometry.fill",
+      stylers: [{ color: "#a5b076" }],
+    },
+    {
+      featureType: "poi.park",
+      elementType: "labels.text.fill",
+      stylers: [{ color: "#447530" }],
+    },
+    {
+      featureType: "road",
+      elementType: "geometry",
+      stylers: [{ color: "#f5f1e6" }],
+    },
+    {
+      featureType: "road.arterial",
+      elementType: "geometry",
+      stylers: [{ color: "#fdfcf8" }],
+    },
+    {
+      featureType: "road.highway",
+      elementType: "geometry",
+      stylers: [{ color: "#f8c967" }],
+    },
+    {
+      featureType: "road.highway",
+      elementType: "geometry.stroke",
+      stylers: [{ color: "#e9bc62" }],
+    },
+    {
+      featureType: "road.highway.controlled_access",
+      elementType: "geometry",
+      stylers: [{ color: "#e98d58" }],
+    },
+    {
+      featureType: "road.highway.controlled_access",
+      elementType: "geometry.stroke",
+      stylers: [{ color: "#db8555" }],
+    },
+    {
+      featureType: "road.local",
+      elementType: "labels.text.fill",
+      stylers: [{ color: "#806b63" }],
+    },
+    {
+      featureType: "transit.line",
+      elementType: "geometry",
+      stylers: [{ color: "#dfd2ae" }],
+    },
+    {
+      featureType: "transit.line",
+      elementType: "labels.text.fill",
+      stylers: [{ color: "#8f7d77" }],
+    },
+    {
+      featureType: "transit.line",
+      elementType: "labels.text.stroke",
+      stylers: [{ color: "#ebe3cd" }],
+    },
+    {
+      featureType: "transit.station",
+      elementType: "geometry",
+      stylers: [{ color: "#dfd2ae" }],
+    },
+    {
+      featureType: "water",
+      elementType: "geometry.fill",
+      stylers: [{ color: "#b9d3c2" }],
+    },
+    {
+      featureType: "water",
+      elementType: "labels.text.fill",
+      stylers: [{ color: "#92998d" }],
+    },
+  ],
+  hiding: [
+    {
+      featureType: "poi.business",
+      stylers: [{ visibility: "off" }],
+    },
+    {
+      featureType: "transit",
+      elementType: "labels.icon",
+      stylers: [{ visibility: "off" }],
+    },
+  ],
+};
+
 
 function buildContent(property) {
   const content = document.createElement("div");
@@ -332,6 +522,7 @@ function buildContent(property) {
         <div class="name">${property.name}</div>
         <div class="address">${property.address}</div>
         <div class="website"><a href="${property.website}" target="_blank">${property.website}</a></div>
+        <div class="details">${property.details}</div>
     </div>
 `;
 
@@ -339,10 +530,23 @@ function buildContent(property) {
 }
 
 const properties = [
+
+  {
+    "name": "TheaterOnline.be",
+    "logo": "http://http://185.108.115.67/img/logo.svg",
+    "address": "Waregem",
+    "details": "TheaterOnline.be is een online platform voor theatermakers en theaterliefhebbers.",
+    "website": "https://theateronline.be/",
+    "position": {
+      "lat": 50.852659639914904,
+      "lng": 3.4089323932538496
+    }
+  },
 {
     "name": "Muzinar VZW",
     "logo": "https://static.wixstatic.com/media/69ea52_fbfeb4331f7140f7bdebb1e19f7c3438~mv2.png/v1/fill/w_333,h_169,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/OLIVER%20Logo%20Small%20blauw.png",
     "address": "Vichte",
+    "details": "Muzinar VZW is een musical theater vereniging.",
     "website": "https://www.muzinarvzw.be/",
     "position": {
       "lat": 50.83951013801532,
@@ -353,6 +557,7 @@ const properties = [
     "name": "DEEPBRIDGE",
     "logo": "https://deepbridge.be/wp-content/uploads/2017/04/DeepBridge-Logo-Base-Yellow-RGB_800x800.png",
     "address": "Wilrijk",
+    "details": "DeepBridge is een productiehuis dat zich specialiseert in het produceren van musicals en theater.",
     "website": "https://deepbridge.be/",
     "position": {
       "lat": 51.15595503751821,
@@ -363,6 +568,7 @@ const properties = [
     "name": "Streven Vichte",
     "logo": "https://scontent-bru2-1.xx.fbcdn.net/v/t39.30808-6/349340723_1011202326997078_782902861576038453_n.jpg?stp=dst-jpg_p526x296&_nc_cat=101&ccb=1-7&_nc_sid=5f2048&_nc_ohc=Tg2B7-1P7J0Ab4LrION&_nc_ht=scontent-bru2-1.xx&oh=00_AfDln6V5kImzbyRQyrcITOhpJFRyg0AZsh3PSj-tYhKctA&oe=661ACA02",
     "address": "Vichte",
+    "details": "Streven Vichte is een toneelvereniging.",
     "website": "https://www.strevenvichte.be/",
     "position": {
       "lat": 50.83922101276414,
@@ -373,10 +579,22 @@ const properties = [
     "name": "Compagnie Foert",
     "logo": "https://www.ciefoert.be/_app/assets/logo-06fe68f2.svg",
     "address": "Waregem",
+    "details": "Compagnie Foert is een theatergezelschap.",
     "website": "https://www.ciefoert.be/",
     "position": {
       "lat": 50.88780672243461,
       "lng": 3.4291093901878638
+    }
+  },
+  {
+    "name": "Koor La Gioia",
+    "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnXg-nhOzsq660hAB08XEuJBlRfsMCrnKbHAp2Tyqmlg&s",
+    "address": "Vichte",
+    "details": "Koor La Gioia is een jong en dynamisch koor.",
+    "website": "https://koorlagioia.be/",
+    "position": {
+      "lat": 50.83894271214811,
+      "lng": 3.403962339478476,
     }
   },
 ];
@@ -394,6 +612,7 @@ window.onload = loadMapScript;
     <!-- prettier-ignore -->
     <script>(g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})
         ({key: "AIzaSyAaE3p7rHezMvtm7ojfpQSiZVbfhmRS-ps", v: "weekly"});</script>
+</script>
 
 </body>
 </html>
