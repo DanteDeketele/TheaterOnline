@@ -5,6 +5,7 @@ const session = require('express-session');
 const path = require('path');
 const cors = require('cors');
 const userRoutes = require('./routes/userRoutes');
+const producerRoutes = require('./routes/producerRoutes');
 const { fetchUserDetails } = require('./middlewares/userMiddleware');
 
 const app = express();
@@ -40,6 +41,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // api routes ------------------------------>
 app.use('/api/user', userRoutes);
+app.use('/api/producer', producerRoutes);
 
 
 // Apply the middleware to all admin routes
@@ -62,8 +64,8 @@ app.get('/admin/users/:id', (req, res) => {
   res.render('admin/user', { user: req.user, id: req.params.id });
 });
 
-app.get('/kaart', (req, res) => {
-  res.render('maps/map', { user: req.user });
+app.get('/map', (req, res) => {
+  res.render('map', { user: req.user });
 });
 
 // Middleware to handle 404 errors
