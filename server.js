@@ -3,10 +3,18 @@
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
+const cors = require('cors');
 const userRoutes = require('./routes/userRoutes');
 const { fetchUserDetails } = require('./middlewares/userMiddleware');
 
 const app = express();
+
+const corsOptions = {
+  origin: '*',
+};
+
+// Enable CORS with specific options
+app.use(cors(corsOptions));
 
 // Add session middleware to your Express.js app
 app.use(session({
@@ -17,6 +25,7 @@ app.use(session({
 
 // Middleware
 app.use(express.json());
+
 
 // Set the view engine to EJS
 app.set('view engine', 'ejs');
@@ -51,6 +60,10 @@ app.get('/admin/users', (req, res) => {
 
 app.get('/admin/users/:id', (req, res) => {
   res.render('admin/user', { user: req.user, id: req.params.id });
+});
+
+app.get('/kaart', (req, res) => {
+  res.render('maps/map', { user: req.user });
 });
 
 // Middleware to handle 404 errors
