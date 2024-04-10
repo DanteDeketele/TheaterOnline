@@ -69,6 +69,10 @@ app.get('/proposal', (req, res) => {
   res.render('pages/business-proposal', { user: req.user });
 });
 
+app.get('/u/:username', (req, res) => {
+  res.render('pages/profile', { user: req.user });
+});
+
 
 // admin routes ---------------------------->
 app.get('/admin', (req, res) => {
