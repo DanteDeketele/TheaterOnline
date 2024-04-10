@@ -65,6 +65,10 @@ app.get('/map', (req, res) => {
   res.render('pages/map', { user: req.user });
 });
 
+app.get('/proposal', (req, res) => {
+  res.render('pages/business-proposal', { user: req.user });
+});
+
 
 // admin routes ---------------------------->
 app.get('/admin', (req, res) => {
