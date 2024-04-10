@@ -70,7 +70,6 @@ async function initMap() {
     content.innerHTML = `
       <div class="icon">
           <img src="${property.logo}" class="logo-map" style="max-width:100%;"/>
-          <span class="fa-sr-only">Theater</span>
       </div>
       <div class="details">
           <div class="name">${property.name}</div>
